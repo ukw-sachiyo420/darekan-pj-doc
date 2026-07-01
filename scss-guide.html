@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCSS解説ガイド｜polartech-2024</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 15px;
+      line-height: 1.8;
+      color: #222;
+      background: #f5f6f8;
+    }
+
+    .page-header {
+      background: #1e1e2e;
+      color: #fff;
+      padding: 40px 32px 32px;
+    }
+    .page-header h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .page-header .meta { font-size: 13px; color: #aaa; }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    section {
+      background: #fff;
+      border-radius: 8px;
+      padding: 32px;
+      margin-bottom: 28px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+
+    h2 {
+      font-size: 19px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e8e8e8;
+    }
+    .section-desc {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 24px;
+      margin-top: 4px;
+    }
+
+    h3 {
+      font-size: 15px;
+      font-weight: 700;
+      margin: 28px 0 8px;
+      color: #1e1e2e;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    h3::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 16px;
+      background: #4a72d6;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    p { margin-bottom: 10px; }
+    p:last-child { margin-bottom: 0; }
+
+    ol, ul { padding-left: 22px; margin-bottom: 10px; }
+    li { margin-bottom: 4px; }
+
+    /* コードブロック */
+    .code-wrap { margin: 12px 0; }
+    .code-label {
+      display: inline-block;
+      background: #3a3a52;
+      color: #aaa;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 4px 4px 0 0;
+      font-family: "SFMono-Regular", Consolas, monospace;
+    }
+    pre {
+      background: #1e1e2e;
+      color: #d4d4d4;
+      padding: 16px 20px;
+      border-radius: 0 6px 6px 6px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.7;
+      margin: 0;
+    }
+    .code-label + pre { border-radius: 0 6px 6px 6px; }
+    pre:not(.code-label + pre) { border-radius: 6px; }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Courier New", monospace;
+    }
+    p code, li code, td code {
+      background: #eef0f3;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-size: 13px;
+    }
+
+    /* シンタックスカラー */
+    .k  { color: #c792ea; } /* キーワード */
+    .fn { color: #82aaff; } /* 関数名・mixin名 */
+    .v  { color: #f07178; } /* 変数 */
+    .s  { color: #c3e88d; } /* 文字列 */
+    .n  { color: #ffcb6b; } /* 数値 */
+    .c  { color: #546e7a; } /* コメント */
+    .p  { color: #89ddff; } /* プロパティ */
+
+    /* 注釈 */
+    .note {
+      background: #f0f4ff;
+      border-left: 4px solid #4a72d6;
+      padding: 12px 16px;
+      border-radius: 0 6px 6px 0;
+      font-size: 13.5px;
+      margin: 12px 0;
+    }
+    .note.tip {
+      background: #f0fdf4;
+      border-color: #4caf50;
+    }
+    .note.warn {
+      background: #fff8e1;
+      border-color: #ffb300;
+    }
+
+    /* 比較カラム */
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 12px 0;
+    }
+    .compare-item .label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #888;
+      margin-bottom: 4px;
+    }
+    @media (max-width: 600px) {
+      .compare { grid-template-columns: 1fr; }
+    }
+
+    /* 変数カラーパレット */
+    .palette {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .palette-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f5f6f8;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+    .palette-swatch {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      border: 1px solid rgba(0,0,0,.1);
+      flex-shrink: 0;
+    }
+
+    /* テーブル */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 14px;
+    }
+    th {
+      background: #f0f2f5;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 700;
+      border: 1px solid #e0e0e0;
+    }
+    td {
+      padding: 10px 14px;
+      border: 1px solid #e0e0e0;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #fafafa; }
+
+    /* ファイルバッジ */
+    .file-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #eef0f3;
+      border: 1px solid #d0d4da;
+      border-radius: 4px;
+      padding: 3px 10px;
+      font-size: 13px;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    .file-badge::before { content: "📄"; }
+  </style>
+</head>
+<body>
+
+<header class="page-header">
+  <h1>SCSS 解説ガイド</h1>
+  <p class="meta">対象テーマ: polartech-2024　／　assets/scss/global/ の内容</p>
+</header>
+
+<div class="container">
+
+  <!-- はじめに -->
+  <section>
+    <h2>このガイドについて</h2>
+    <p class="section-desc">SCSSをこれから触る人向けに、このプロジェクトで使っている共通設定ファイルの読み方・使い方を解説します。</p>
+
+    <h3>SCSSとは？</h3>
+    <p>SCSSはCSSをより書きやすくした「拡張言語」です。変数・繰り返しの省略・条件分岐など、CSSにはない便利な機能が使えます。</p>
+    <p>ブラウザはSCSSを直接読めないため、<strong>Gulpでコンパイル（変換）してCSSにしてから</strong>使います。</p>
+
+    <h3>global フォルダの役割</h3>
+    <p><code>assets/scss/global/</code> はサイト全体で使い回す「共通設定」をまとめた場所です。直接スタイルを書くのではなく、他のSCSSファイルから呼び出して使います。</p>
+    <table>
+      <thead><tr><th>ファイル</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr><td><code>_variables.scss</code></td><td>色・フォント・サイズなどの定数（変数）をまとめた設定ファイル</td></tr>
+        <tr><td><code>_mixin.scss</code></td><td>よく使うCSSのまとまりに名前をつけて再利用できるようにしたもの</td></tr>
+        <tr><td><code>_functions.scss</code></td><td>計算処理に名前をつけて再利用できるようにしたもの</td></tr>
+        <tr><td><code>_index.scss</code></td><td>上記3ファイルをまとめて外部に公開するためのファイル（触らなくてOK）</td></tr>
+      </tbody>
+    </table>
+
+    <div class="note">
+      <strong>ファイル名が _ から始まる理由</strong><br>
+      アンダースコアで始まるSCSSファイルは「パーシャル」と呼ばれ、単体でCSSに変換されません。他のファイルから <code>@use</code> や <code>@forward</code> で読み込まれる専用のファイルです。
+    </div>
+  </section>
+
+  <!-- _variables.scss -->
+  <section>
+    <span class="file-badge">_variables.scss</span>
+    <h2>変数（Variables）</h2>
+    <p class="section-desc">色・フォント・余白などの値に「名前」をつけて管理するファイルです。同じ値を何度も書かずに済み、変更するときは1箇所直すだけで全体に反映されます。</p>
+
+    <h3>なぜ変数を使うのか</h3>
+    <div class="compare">
+      <div class="compare-item">
+        <div class="label">変数なし（修正が大変）</div>
+        <pre><code>color: <span class="n">#142633</span>;
+background: <span class="n">#142633</span>;
+border-color: <span class="n">#142633</span>;</code></pre>
+      </div>
+      <div class="compare-item">
+        <div class="label">変数あり（1箇所直すだけ）</div>
+        <pre><code>color: <span class="v">$c-main</span>;
+background: <span class="v">$c-main</span>;
+border-color: <span class="v">$c-main</span>;</code></pre>
+      </div>
+    </div>
+    <p>カラーコードを後から変更したい場合、変数を使っていれば <code>$c-main: #142633;</code> の1行を書き換えるだけで全体が更新されます。</p>
+
+    <h3>カラー変数</h3>
+    <div class="palette">
+      <div class="palette-item"><div class="palette-swatch" style="background:#E5F6FE"></div><code>$c-sub1</code> #E5F6FE</div>
+      <div class="palette-item"><div class="palette-swatch" style="background:#F3F8FA;border-color:#ccc"></div><code>$c-sub2</code> #F3F8FA</div>
+      <div class="palette-item"><div class="palette-swatch" style="background:#E8CF28"></div><code>$c-sub3</code> #E8CF28</div>
+      <div class="palette-item"><div class="palette-swatch" style="background:#142633"></div><code>$c-main</code> #142633</div>
+      <div class="palette-item"><div class="palette-swatch" style="background:#25445A"></div><code>$c-accent</code> #25445A</div>
+    </div>
+    <div class="code-wrap">
+      <div class="code-label">_variables.scss</div>
+      <pre><code><span class="c">// Color</span>
+<span class="v">$c-sub1</span>: <span class="n">#E5F6FE</span>;   <span class="c">// 薄い水色（背景などに使う補助色）</span>
+<span class="v">$c-sub2</span>: <span class="n">#F3F8FA</span>;   <span class="c">// さらに薄い青白（背景などに使う補助色）</span>
+<span class="v">$c-sub3</span>: <span class="n">#E8CF28</span>;   <span class="c">// 黄色（アクセント補助色）</span>
+<span class="v">$c-main</span>: <span class="n">#142633</span>;   <span class="c">// ネイビー（メインカラー）</span>
+<span class="v">$c-accent</span>: <span class="n">#25445A</span>; <span class="c">// ダークブルー（アクセントカラー）</span></code></pre>
+    </div>
+
+    <h3>フォント変数</h3>
+    <div class="code-wrap">
+      <div class="code-label">_variables.scss</div>
+      <pre><code><span class="c">// Font</span>
+<span class="v">$f1</span>: <span class="s">"Noto Sans JP"</span>, sans-serif;  <span class="c">// 日本語メインフォント</span>
+<span class="v">$f2</span>: <span class="s">"Montserrat"</span>, sans-serif;     <span class="c">// 英字フォント（見出しなどに使う）</span>
+<span class="v">$fontawesome</span>: <span class="s">"Font Awesome 6 Free"</span>; <span class="c">// アイコンフォント</span></code></pre>
+    </div>
+    <div class="code-wrap">
+      <div class="code-label">使い方（例）</div>
+      <pre><code><span class="p">font-family</span>: <span class="v">$f1</span>;
+<span class="p">font-family</span>: <span class="v">$f2</span>;</code></pre>
+    </div>
+
+    <h3>サイズ・余白変数</h3>
+    <div class="code-wrap">
+      <div class="code-label">_variables.scss</div>
+      <pre><code><span class="c">// ヘッダーの高さ</span>
+<span class="v">$pcHeaderHeight</span>: <span class="n">100px</span>;
+<span class="v">$spHeaderHeight</span>: <span class="n">70px</span>;
+
+<span class="c">// コンテンツ幅の上限（S/M/Lの3段階）</span>
+<span class="v">$pcMaxWidthS</span>: <span class="n">960px</span>;
+<span class="v">$pcMaxWidthM</span>: <span class="n">1180px</span>;
+<span class="v">$pcMaxWidthL</span>: <span class="n">1520px</span>;
+
+<span class="c">// コンテンツ左右のpadding（PC）</span>
+<span class="v">$pcInnerPadding</span>: <span class="n">40px</span>;
+
+<span class="c">// セクション上下のpadding/margin</span>
+<span class="v">$pcSectionPadding</span>: <span class="n">96px</span>;  <span class="c">// PC・上下余白</span>
+<span class="v">$pcSectionMargin</span>: <span class="n">80px</span>;   <span class="c">// PC・要素間の距離</span>
+<span class="v">$spSectionPadding</span>: <span class="n">48px</span>;  <span class="c">// SP・上下余白</span>
+<span class="v">$spSectionMargin</span>: <span class="n">40px</span>;   <span class="c">// SP・要素間の距離</span>
+
+<span class="c">// ドロップシャドウ（影）</span>
+<span class="v">$drop-shadow</span>: <span class="n">3px 3px 10px</span> rgb(<span class="n">0 0 0 / 0.05</span>);</code></pre>
+    </div>
+    <div class="code-wrap">
+      <div class="code-label">使い方（例）</div>
+      <pre><code><span class="p">max-width</span>: <span class="v">$pcMaxWidthM</span>;
+<span class="p">padding</span>: <span class="v">$pcSectionPadding</span> <span class="v">$pcInnerPadding</span>;
+<span class="p">box-shadow</span>: <span class="v">$drop-shadow</span>;</code></pre>
+    </div>
+  </section>
+
+  <!-- _mixin.scss -->
+  <section>
+    <span class="file-badge">_mixin.scss</span>
+    <h2>Mixin（ミックスイン）</h2>
+    <p class="section-desc">よく使うCSSのまとまりに名前をつけたものです。<code>@include 名前</code> と書くだけで、あらかじめ定義したCSSをまるごと呼び出せます。</p>
+
+    <div class="note">
+      <strong>Mixinを使う前の準備</strong><br>
+      Mixinを使いたいSCSSファイルの先頭に <code>@use "global" as var;</code> と書く必要があります。その後 <code>var.mixin名()</code> の形で呼び出せます。
+    </div>
+
+    <h3>mq()　―　メディアクエリ（レスポンシブ対応）</h3>
+    <p>画面サイズによって表示を変えるCSSを書くための mixin です。ブレークポイント（切り替え幅）に名前がついているので、数値を覚えなくても使えます。</p>
+    <table>
+      <thead><tr><th>引数</th><th>対象画面幅</th><th>用途</th></tr></thead>
+      <tbody>
+        <tr><td><code>sp</code></td><td>520px 以下</td><td>スマートフォン向けスタイル</td></tr>
+        <tr><td><code>tab</code></td><td>960px 以下</td><td>タブレット・スマートフォン向けスタイル</td></tr>
+        <tr><td><code>nav</code></td><td>1366px 以下</td><td>ナビゲーションの切り替え（ハンバーガーメニューなど）</td></tr>
+      </tbody>
+    </table>
+    <div class="compare">
+      <div class="compare-item">
+        <div class="label">Mixinなし（毎回長い記述が必要）</div>
+        <pre><code>@media screen and (max-width: 520px) {
+  .title {
+    font-size: 18px;
+  }
+}</code></pre>
+      </div>
+      <div class="compare-item">
+        <div class="label">Mixinあり（すっきり書ける）</div>
+        <pre><code>@include <span class="fn">var.mq</span>(sp) {
+  .title {
+    <span class="p">font-size</span>: <span class="n">18px</span>;
+  }
+}</code></pre>
+      </div>
+    </div>
+
+    <h3>bg_image()　―　背景画像の設定</h3>
+    <p>背景画像を設定するときの定型スタイル（画像パス・繰り返しなし・中央配置）をまとめた mixin です。</p>
+    <div class="code-wrap">
+      <div class="code-label">使い方（例）</div>
+      <pre><code>.hero {
+  @include <span class="fn">var.bg_image</span>(<span class="s">"../img/hero.jpg"</span>) {
+    <span class="p">background-size</span>: cover;  <span class="c">// {} の中に追加スタイルを書ける</span>
+  }
+}</code></pre>
+    </div>
+    <div class="code-wrap">
+      <div class="code-label">出力されるCSS</div>
+      <pre><code>.hero {
+  <span class="p">background-image</span>: url(<span class="s">"../img/hero.jpg"</span>);
+  <span class="p">background-repeat</span>: no-repeat;
+  <span class="p">background-position</span>: center;
+  <span class="p">background-size</span>: cover;
+}</code></pre>
+    </div>
+
+    <h3>hover　―　PC・タッチデバイスのホバー出しわけ</h3>
+    <p>マウスがある端末（PC）では <code>:hover</code>、タッチデバイス（スマホ・タブレット）では <code>:active</code> に自動で振り分けてくれる mixin です。</p>
+    <div class="code-wrap">
+      <div class="code-label">使い方（例）</div>
+      <pre><code>.btn {
+  <span class="p">opacity</span>: <span class="n">1</span>;
+
+  @include <span class="fn">var.hover</span> {
+    <span class="p">opacity</span>: <span class="n">0.7</span>; <span class="c">// PCではホバー時、スマホでは押したとき</span>
+  }
+}</code></pre>
+    </div>
+    <div class="note tip">
+      <strong>なぜ出しわけが必要？</strong><br>
+      スマートフォンは厳密には「ホバー」できません。<code>:hover</code> だけ書くとスマホでタップ後にスタイルが残ってしまうことがあります。この mixin を使うと両方に適切に対応できます。
+    </div>
+
+    <h3>line-clamp()　―　テキストを指定行数で切り詰める</h3>
+    <p>長いテキストを指定した行数で切り詰めて「...」で省略表示するための mixin です。</p>
+    <table>
+      <thead><tr><th>引数</th><th>動作</th></tr></thead>
+      <tbody>
+        <tr><td><code>1</code></td><td>1行で収まらない場合は「...」で省略（横1行）</td></tr>
+        <tr><td><code>2</code> 以上</td><td>指定行数で折り返し、超えた部分を「...」で省略</td></tr>
+      </tbody>
+    </table>
+    <div class="compare">
+      <div class="compare-item">
+        <div class="label">1行で省略</div>
+        <pre><code>.title {
+  @include <span class="fn">var.line-clamp</span>(<span class="n">1</span>);
+}</code></pre>
+      </div>
+      <div class="compare-item">
+        <div class="label">3行で省略</div>
+        <pre><code>.summary {
+  @include <span class="fn">var.line-clamp</span>(<span class="n">3</span>);
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- _functions.scss -->
+  <section>
+    <span class="file-badge">_functions.scss</span>
+    <h2>Function（ファンクション）</h2>
+    <p class="section-desc">Mixinと似ていますが、Functionは「計算して値を返す」のが目的です。<code>プロパティ: 関数名(引数)</code> の形で使います。</p>
+
+    <h3>rem()　―　pxをremに変換する</h3>
+    <p>デザインカンプなどで指定された <code>px</code> の数値を、アクセシビリティに配慮した <code>rem</code> 単位に自動変換してくれる関数です。</p>
+
+    <div class="note">
+      <strong>remとは？</strong><br>
+      <code>rem</code> はブラウザの基本フォントサイズ（通常16px）を基準にした単位です。ユーザーがブラウザのフォントサイズ設定を変えたとき、<code>px</code> は固定のままですが <code>rem</code> はそれに合わせて拡縮します。アクセシビリティ対応として推奨されます。
+    </div>
+    <table>
+      <thead><tr><th>引数</th><th>返す値</th></tr></thead>
+      <tbody>
+        <tr><td><code>16</code></td><td><code>1rem</code>（16px ÷ 16 = 1）</td></tr>
+        <tr><td><code>24</code></td><td><code>1.5rem</code>（24px ÷ 16 = 1.5）</td></tr>
+        <tr><td><code>32</code></td><td><code>2rem</code>（32px ÷ 16 = 2）</td></tr>
+      </tbody>
+    </table>
+    <div class="compare">
+      <div class="compare-item">
+        <div class="label">使い方</div>
+        <pre><code>.title {
+  <span class="p">font-size</span>: <span class="fn">var.rem</span>(<span class="n">24</span>);
+  <span class="p">margin-bottom</span>: <span class="fn">var.rem</span>(<span class="n">32</span>);
+}</code></pre>
+      </div>
+      <div class="compare-item">
+        <div class="label">出力されるCSS</div>
+        <pre><code>.title {
+  <span class="p">font-size</span>: <span class="n">1.5rem</span>;
+  <span class="p">margin-bottom</span>: <span class="n">2rem</span>;
+}</code></pre>
+      </div>
+    </div>
+
+    <h3>calclamp()　―　画面幅に応じてフォントサイズをなめらかに変化させる</h3>
+    <p>スマートフォン（520px）とPC（1366px）の間で、フォントサイズや余白を<strong>滑らかに変化</strong>させるための関数です。「SP用のサイズ」と「PC用のサイズ」を渡すだけで自動計算してくれます。</p>
+
+    <div class="note">
+      <strong>clampとは？</strong><br>
+      CSSの <code>clamp(最小値, 推奨値, 最大値)</code> 関数を使っています。画面幅が小さいときは最小値、大きいときは最大値に固定され、その間はなめらかに変化します。
+    </div>
+    <div class="compare">
+      <div class="compare-item">
+        <div class="label">使い方（SP:16px ↔ PC:24px）</div>
+        <pre><code>.title {
+  <span class="p">font-size</span>: <span class="fn">var.calclamp</span>(<span class="n">16</span>, <span class="n">24</span>);
+}</code></pre>
+      </div>
+      <div class="compare-item">
+        <div class="label">イメージ（画面幅による変化）</div>
+        <pre><code><span class="c">// 520px以下  → 16px固定</span>
+<span class="c">// 520〜1366px → 徐々に拡大</span>
+<span class="c">// 1366px以上 → 24px固定</span></code></pre>
+      </div>
+    </div>
+
+    <div class="note tip">
+      <strong>ポイント</strong><br>
+      引数は <strong>px数値のみ（単位なし）</strong> で渡してください。<code>rem()</code> と組み合わせて内部で自動的に rem に変換されます。
+    </div>
+  </section>
+
+  <!-- 使い方まとめ -->
+  <section>
+    <h2>実際のSCSSファイルでの使い方</h2>
+    <p class="section-desc">global フォルダの変数・mixin・function を自分のSCSSファイルで使うには、まず先頭に <code>@use</code> を書く必要があります。</p>
+
+    <div class="code-wrap">
+      <div class="code-label">使いたいSCSSファイルの先頭に書く</div>
+      <pre><code><span class="k">@use</span> <span class="s">"global"</span> <span class="k">as</span> var;</code></pre>
+    </div>
+
+    <div class="note warn">
+      <code>as var</code> は「globalを <code>var</code> という名前で呼び出す」という意味です。<code>var.変数名</code> / <code>var.mixin名()</code> / <code>var.関数名()</code> の形で使います。
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label">まとめて使う例</div>
+      <pre><code><span class="k">@use</span> <span class="s">"global"</span> <span class="k">as</span> var;
+
+.card {
+  <span class="p">font-family</span>: <span class="v">var.$f1</span>;
+  <span class="p">color</span>: <span class="v">var.$c-main</span>;
+  <span class="p">font-size</span>: <span class="fn">var.rem</span>(<span class="n">16</span>);
+  <span class="p">box-shadow</span>: <span class="v">var.$drop-shadow</span>;
+
+  .card__title {
+    <span class="p">font-size</span>: <span class="fn">var.calclamp</span>(<span class="n">18</span>, <span class="n">24</span>);
+    <span class="p">font-family</span>: <span class="v">var.$f2</span>;
+    @include <span class="fn">var.line-clamp</span>(<span class="n">2</span>);
+  }
+
+  @include <span class="fn">var.hover</span> {
+    <span class="p">opacity</span>: <span class="n">0.8</span>;
+  }
+
+  @include <span class="fn">var.mq</span>(sp) {
+    <span class="p">padding</span>: <span class="fn">var.rem</span>(<span class="n">16</span>);
+  }
+}</code></pre>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

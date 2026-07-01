@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows向け 開発環境構築ガイド｜polartech-2024</title>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Hiragino Sans", "Meiryo", sans-serif;
+            font-size: 15px;
+            line-height: 1.8;
+            color: #222;
+            background: #f5f6f8;
+        }
+
+        .page-header {
+            background: #1e1e2e;
+            color: #fff;
+            padding: 40px 32px 32px;
+        }
+
+        .page-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .page-header .meta {
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+        }
+
+        /* セクション */
+        section {
+            background: #fff;
+            border-radius: 8px;
+            padding: 32px;
+            margin-bottom: 28px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
+        }
+
+        h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8e8e8;
+        }
+
+        h3 {
+            font-size: 15px;
+            font-weight: 700;
+            margin: 20px 0 8px;
+            color: #333;
+        }
+
+        p {
+            margin-bottom: 12px;
+        }
+
+        p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ステップバッジ */
+        .step-badge {
+            display: inline-block;
+            background: #1e1e2e;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            letter-spacing: .05em;
+        }
+
+        .step-badge.done {
+            background: #4caf50;
+        }
+
+        .step-badge.check {
+            background: #ff9800;
+        }
+
+        /* リスト */
+        ol,
+        ul {
+            padding-left: 24px;
+            margin-bottom: 12px;
+        }
+
+        li {
+            margin-bottom: 4px;
+        }
+
+        /* コードブロック */
+        pre {
+            background: #1e1e2e;
+            color: #d4d4d4;
+            padding: 16px 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 12px 0;
+        }
+
+        code {
+            font-family: "SFMono-Regular", Consolas, "Courier New", monospace;
+        }
+
+        p code,
+        li code {
+            background: #eef0f3;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+
+        /* 注釈 */
+        .note {
+            background: #f0f4ff;
+            border-left: 4px solid #4a72d6;
+            padding: 12px 16px;
+            border-radius: 0 6px 6px 0;
+            font-size: 13.5px;
+            margin: 12px 0;
+            color: #333;
+        }
+
+        .note.warn {
+            background: #fff8e1;
+            border-color: #ffb300;
+        }
+
+        .note.success {
+            background: #f0fdf4;
+            border-color: #4caf50;
+        }
+
+        /* テーブル */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f0f2f5;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 700;
+            border: 1px solid #e0e0e0;
+        }
+
+        td {
+            padding: 10px 14px;
+            border: 1px solid #e0e0e0;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) td {
+            background: #fafafa;
+        }
+
+        /* 判定ボックス */
+        .judge {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .judge-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: #f5f6f8;
+            border-radius: 6px;
+            padding: 12px 14px;
+        }
+
+        .judge-item .icon {
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .judge-item .text {
+            font-size: 14px;
+        }
+
+        .judge-item .text strong {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        /* トラブルアコーディオン */
+        details {
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        summary {
+            cursor: pointer;
+            padding: 13px 16px;
+            font-weight: 700;
+            font-size: 14px;
+            background: #f5f6f8;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        summary::before {
+            content: "▶";
+            font-size: 11px;
+            color: #888;
+            transition: transform .2s;
+        }
+
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+
+        .details-body {
+            padding: 16px;
+            font-size: 14px;
+        }
+
+        .details-body p {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="page-header">
+        <h1>Windows向け 開発環境構築ガイド</h1>
+        <p class="meta">対象テーマ: polartech-2024　／　作成日: 2026-06-30</p>
+    </header>
+
+    <div class="container">
+
+        <!-- このガイドについて -->
+        <section>
+            <h2>このガイドについて</h2>
+            <p>このドキュメントは、Windows PCで初めてこのテーマの開発環境を整える人向けの手引きです。</p>
+            <p>Node.js・npm・Gulpを知らなくても、<strong>STEP 0から順番に進めれば動かせるように</strong>書いています。</p>
+        </section>
+
+        <!-- 全体像 -->
+        <section>
+            <h2>そもそも何をするのか（全体像）</h2>
+            <p>このテーマではスタイルを「SCSS」という形式で書いています。ブラウザはSCSSを直接読めないため、<strong>CSSに変換（コンパイル）する作業</strong>が必要です。この変換をファイル保存のたびに自動でやってくれるのが、今回セットアップするツール群です。
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ツール</th>
+                        <th>役割</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>Node.js</code></td>
+                        <td>JavaScriptをPC上で動かすための実行環境。GulpなどのツールはNode.js上で動く。</td>
+                    </tr>
+                    <tr>
+                        <td><code>npm</code></td>
+                        <td>Node.jsと一緒に入るパッケージ管理ツール。必要なツールを一括でインストールできる。</td>
+                    </tr>
+                    <tr>
+                        <td><code>Gulp</code></td>
+                        <td>タスクランナー。「SCSSを監視してCSSに変換する」などの自動化処理を実行する。</td>
+                    </tr>
+                    <tr>
+                        <td><code>BrowserSync</code></td>
+                        <td>ファイルを保存したときにブラウザを自動リロードしてくれるツール。</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 作業場所 -->
+        <section>
+            <h2>作業場所：VSCodeのターミナル（PowerShell）</h2>
+            <p>このガイドのコマンドは、<strong>VSCodeの統合ターミナル</strong>で実行します。外部アプリは不要でVSCode内で完結します。</p>
+
+            <h3>ターミナルの開き方</h3>
+            <ol>
+                <li>VSCodeのメニューから「<strong>ターミナル → 新しいターミナル</strong>」を選ぶ</li>
+                <li>ターミナル右上のシェル選択（<code>+</code> の横にある <code>∨</code> ボタン）から <strong>PowerShell</strong> を選ぶ</li>
+                <li>以降の手順はすべてこのターミナルで実行する</li>
+            </ol>
+
+            <div class="note">
+                PowerShellが選択肢にない場合は、Windowsの検索から「PowerShell」を開いて作業しても問題ありません。
+            </div>
+        </section>
+
+        <!-- STEP 0 -->
+        <section>
+            <span class="step-badge check">STEP 0</span>
+            <h2>Node.jsが入っているか確認する</h2>
+            <p>まずNode.jsがすでに導入済みかどうかを確認します。ターミナルで次の2行を1行ずつ実行してください。</p>
+
+            <pre><code>node -v
+npm -v</code></pre>
+
+            <div class="judge">
+                <div class="judge-item">
+                    <span class="icon">✅</span>
+                    <div class="text">
+                        <strong>バージョン番号が表示される（例: v20.11.0）</strong>
+                        Node.js導入済みです。<strong>STEP 2へ進んでください。</strong>
+                        （Node.jsが既に入っている場合、STEP 1はスキップしてSTEP 2へ）
+                    </div>
+                </div>
+                <div class="judge-item">
+                    <span class="icon">❌</span>
+                    <div class="text">
+                        <strong>「node は認識されません」のようなエラーが出る</strong>
+                        未導入です。<strong>STEP 1へ進んでください。</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STEP 1 -->
+        <section>
+            <span class="step-badge">STEP 1</span>
+            <h2>Node.jsをインストールする</h2>
+
+            <h3>インストール手順</h3>
+            <ol>
+                <li>ブラウザで <strong>Node.js 公式サイト（<a href="https://nodejs.org/ja"
+                            target="_blank">https://nodejs.org/ja</a>）</strong>を開く</li>
+                <li>「<strong>LTS（推奨版）</strong>」と書かれたボタンからインストーラー（<code>.msi</code> ファイル）をダウンロードする</li>
+                <li>ダウンロードしたファイルをダブルクリックして起動する</li>
+                <li>インストーラーはすべてデフォルト設定のまま「Next」→「Install」で進めてよい</li>
+                <li>完了したら <strong>VSCodeを完全に閉じ、再度起動する</strong>（ターミナルを閉じるだけでは不十分）</li>
+            </ol>
+
+            <h3>インストール後の確認</h3>
+            <p>VSCodeを再起動したあと、ターミナルで再度実行:</p>
+            <pre><code>node -v
+npm -v</code></pre>
+            <div class="note success">両方ともバージョン番号が表示されればOKです。まだエラーになる場合はPCを再起動してから再確認してください。</div>
+
+            <h3>うまく入らない場合</h3>
+            <ul>
+                <li>会社PCで「<strong>管理者として実行</strong>」が必要なことがある（インストーラーを右クリック→「管理者として実行」）</li>
+                <li>セキュリティソフトがブロックしている場合は一時的に無効化して試す</li>
+                <li>古いNode.jsが入っている場合はWindowsの「アプリ」設定からアンインストール後に再インストール</li>
+            </ul>
+        </section>
+
+        <!-- STEP 2 -->
+        <section>
+            <span class="step-badge">STEP 2</span>
+            <h2>プロジェクトファイルをテーマフォルダに配置する</h2>
+            <p>担当者から共有された以下の2ファイルを、テーマフォルダ（<code>polartech-2024</code>）の直下に置いてください。</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ファイル名</th>
+                        <th>役割</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>package.json</code></td>
+                        <td>このプロジェクトで使うツールの一覧が書かれた設定ファイル。<code>npm install</code> はこのファイルを読んでインストールを行う。</td>
+                    </tr>
+                    <tr>
+                        <td><code>gulpfile.js</code></td>
+                        <td>Gulpの動作設定ファイル。「どのSCSSを監視して、どこに出力するか」などが書かれている。</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>配置後のフォルダ構成（確認）</h3>
+            <pre><code>polartech-2024/
+├── package.json       ← ここに置く
+├── gulpfile.js        ← ここに置く
+├── assets/
+├── functions.php
+└── ...（その他のテーマファイル）</code></pre>
+
+            <div class="note warn">
+                この2ファイルがない状態で次のSTEPに進んでも <code>npm install</code> が正しく動きません。必ず先に配置してください。
+            </div>
+        </section>
+
+        <!-- STEP 3 -->
+        <section>
+            <span class="step-badge">STEP 3</span>
+            <h2>必要なツールをインストールする <small style="font-weight:400;font-size:13px;color:#888;">（初回のみ）</small></h2>
+            <p>Node.jsが入ったら、このテーマで使うツール類を一括でインストールします。<code>npm install</code> というコマンドがこれを自動でやってくれます。</p>
+
+            <h3>1. VSCodeでテーマフォルダを開く</h3>
+            <ol>
+                <li>VSCodeを起動する</li>
+                <li>メニューから「<strong>ファイル → フォルダーを開く</strong>」を選ぶ</li>
+                <li><code>polartech-2024</code> フォルダを選択して開く</li>
+                <li>メニューから「<strong>ターミナル → 新しいターミナル</strong>」を開く</li>
+            </ol>
+            <div class="note success">
+                VSCodeでフォルダを開いた状態でターミナルを起動すると、<strong>自動的にそのフォルダの中にいる状態</strong>になります。
+            </div>
+
+            <h3>2. インストールを実行する</h3>
+            <pre><code>npm install</code></pre>
+            <div class="note success">
+                大量のテキストが流れますが正常です。エラーなく終われば完了。<code>node_modules</code> フォルダが生成されていれば成功です。<br>
+                <strong>この手順は初回のみです。2回目以降は不要です。</strong>
+            </div>
+        </section>
+
+        <!-- STEP 4 -->
+        <section>
+            <span class="step-badge">STEP 4</span>
+            <h2>ローカルサイトのURLを確認・設定する</h2>
+            <p>このテーマではブラウザ自動リロード（BrowserSync）のためにローカルサイトのURLを指定する必要があります。</p>
+
+            <p>確認場所: <code>gulpfile.js</code> の以下の行</p>
+            <pre><code>proxy: "http://polartech.local/",</code></pre>
+
+            <p>Localアプリで自分のサイトを起動したとき表示されるURL（例: <code>http://polartech.local/</code>）とこの値が一致していないと、ブラウザが自動で開きません。</p>
+            <div class="note warn">
+                URLが違う場合はこの行を自分のURLに書き換えてから次のSTEPへ進んでください。
+            </div>
+        </section>
+
+        <!-- STEP 5 -->
+        <section>
+            <span class="step-badge done">STEP 5</span>
+            <h2>開発を開始する</h2>
+
+            <div class="note warn">
+                <strong>作業するたびに毎回このSTEPを行ってください。</strong><br>
+                PCを起動して開発を始めるとき、必ず <code>npm start</code> を実行してからSCSSを編集してください。<br>
+                実行しないままSCSSを編集しても、CSSに反映されません。
+            </div>
+
+            <h3>起動手順</h3>
+            <ol>
+                <li>Localアプリを起動し、WordPressサイトをStartする</li>
+                <li>VSCodeでテーマフォルダを開く</li>
+                <li>ターミナルを開き、以下を実行する</li>
+            </ol>
+            <pre><code>npm start</code></pre>
+
+            <p>成功するとターミナルが監視状態になり、ブラウザが自動で開きます。SCSSを編集して保存すると、CSSへの変換とブラウザリロードが自動で行われます。</p>
+
+            <div class="note">停止するには: <code>Ctrl + C</code>　／　次回また作業するときは再度 <code>npm start</code> を実行してください。</div>
+        </section>
+
+        <!-- SCSS編集場所 -->
+        <section>
+            <h2>SCSSの編集場所</h2>
+            <p>開発中に触るのは <code>assets/scss/</code> 配下のファイルです。<br>
+                <strong><code>assets/css/</code> はビルド後の出力先なので直接編集しないでください。</strong>
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>フォルダ</th>
+                        <th>内容</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>assets/scss/global/</code></td>
+                        <td>変数・mixin（サイト全体で使う共通設定）</td>
+                    </tr>
+                    <tr>
+                        <td><code>assets/scss/base/</code></td>
+                        <td>リセットCSSなど基盤スタイル</td>
+                    </tr>
+                    <tr>
+                        <td><code>assets/scss/common/</code></td>
+                        <td>ヘッダー・フッターなど共通パーツのスタイル</td>
+                    </tr>
+                    <tr>
+                        <td><code>assets/scss/page/</code></td>
+                        <td>各ページ固有のスタイル</td>
+                    </tr>
+                    <tr>
+                        <td><code>assets/scss/style.scss</code></td>
+                        <td>全SCSSをまとめてimportするエントリファイル</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- トラブル対処 -->
+        <section>
+            <h2>トラブル対処</h2>
+
+            <details>
+                <summary>npm install でエラーになる</summary>
+                <div class="details-body">
+                    <p><code>node_modules</code> を削除してから再実行してください。</p>
+                    <pre><code>Remove-Item -Recurse -Force node_modules
+Remove-Item -Force package-lock.json
+npm install</code></pre>
+                </div>
+            </details>
+
+            <details>
+                <summary>npm start でブラウザが開かない・同期しない</summary>
+                <div class="details-body">
+                    <ul>
+                        <li>Localアプリでサイトが起動しているか確認する</li>
+                        <li><code>gulpfile.js</code> の <code>proxy</code> のURLが正しいか確認する</li>
+                        <li>上記を直したうえで <code>npm start</code> を再実行する</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>ファイルを保存してもスタイルが変わらない</summary>
+                <div class="details-body">
+                    <ol>
+                        <li>ターミナルにSCSSのエラーが出ていないか確認する（赤文字が出ていればSCSSの記述ミス）</li>
+                        <li>ブラウザでハードリロードを試す（<code>Ctrl + F5</code>）</li>
+                        <li>WordPressのキャッシュプラグイン（wp-fastest-cache）のキャッシュをクリアする</li>
+                    </ol>
+                </div>
+            </details>
+
+            <details open>
+                <summary>node -v は通るが npm -v でセキュリティエラーになる</summary>
+                <div class="details-body">
+                    <p>PowerShellのスクリプト実行ポリシーが制限されているのが原因です。<br>
+                        エラーメッセージに「スクリプトの実行が無効」「.ps1 を読み込むことができません」と出ていれば確定です。</p>
+                    <p>ターミナルで次を実行してください:</p>
+                    <pre><code>Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned</code></pre>
+                    <p>確認プロンプトが出たら <code>Y</code> を入力してEnterを押す。<br>
+                        その後ターミナルを開き直して <code>npm -v</code> を再確認してください。</p>
+                    <div class="note">このコマンドは「自分のユーザーアカウントの範囲でのみ、署名済みスクリプトの実行を許可する」設定です。PC全体への影響はありません。</div>
+                </div>
+            </details>
+
+            <details>
+                <summary>node -v は通るが npm -v でエラーになる（その他）</summary>
+                <div class="details-body">
+                    <p>VSCodeを再起動して再確認。それでも解決しない場合はPCを再起動する。</p>
+                </div>
+            </details>
+
+            <details>
+                <summary>パスの途中にスペースがあって cd できない</summary>
+                <div class="details-body">
+                    <p><code>cd</code> のパスをダブルクォートで囲めば動きます。</p>
+                    <pre><code>cd "C:\Users\name\Local Sites\..."</code></pre>
+                </div>
+            </details>
+
+        </section>
+
+    </div>
+</body>
+
+</html>
